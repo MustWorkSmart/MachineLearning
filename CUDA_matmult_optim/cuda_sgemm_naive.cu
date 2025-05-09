@@ -73,7 +73,7 @@ __global__ void sgemm_naive(int M, int N, int K, float alpha, const float *A,
   }
 }
 
-const int block_size = 32; // CUDA maximum is 1024 total threads per block
+const int block_size = 32; // CUDA maximum is 1024 total threads per block, 2d block with 32 in each x/y dimension
 //const int DSIZE = 2; //small inputs as initial test - tested and matching expected result (way below)
 //now, trying a larger dataset
 //const int DSIZE = 10; //tested and verified
