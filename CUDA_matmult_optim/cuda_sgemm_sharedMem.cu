@@ -122,8 +122,7 @@ __global__ void sgemm_sharedMem(int M, int N, int K, float alpha, const float* A
     __shared__ float Bs[BLOCKSIZE * BLOCKSIZE];
 
     float tmp = 0.0;
-    // the outer loop advances A along the columns and B along
-    // the rows until we have fully calculated the result in C.
+
     for (int bkIdx = 0; bkIdx < K; bkIdx += BLOCKSIZE) {
         // Have each thread load one of the elements in A & B from global memory into shared memory.
         // Make y (=threadIdx.x) the consecutive index to allow global memory access coalescing
