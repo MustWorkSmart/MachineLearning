@@ -8,7 +8,7 @@
 
 // (*)
 //basically, the next step here is to use the smaller but faster (lower latency and higher bandwidth than global memory) shared memory (SMEM)
-//idea is to have BLOCKSIZE x BLOCKSIZE of the matrices in such shared mem, and have work related to such as much as possible, before loading up the next block
+//idea is to have BLOCKSIZE x BLOCKSIZE of the matrices in such shared mem, and have work related to such done as much as possible, before loading up the next block
 //e.g. to calculate the 1st 32x32 block of C, the 1st super-row (i.e. k/32 32x32 blocks) of A and the 1st super-column (i.e. n/32 32x32 blocks) of B are needed, but only 1 block from A and 1 block from B can be in the shared mem at a time due to its capacity (*)
 // (*) note that parameters/codes here may NOT be tuned (or generalized) for such capacity and occupancy, like for various m/k/n/BLOCKSIZE (could have different dimensions in x/y) values and/or each element data type/size (fixed to float32 here)
 
@@ -109,6 +109,8 @@ __global__ void sgemm_sharedMem(int M, int N, int K, float alpha, const float* A
 
     const int y = threadIdx.x;
     const int x = threadIdx.y;
+    const int C_rowIdx = blockIdx.y * blockDim.y + threadIdx.y;
+    const int C_colIdx = blockIdx.x * blockDim.x + threadIdx.x;
 
     // advance pointers to the starting positions
     A += blockIdx.y * BLOCKSIZE * K;
@@ -131,7 +133,7 @@ __global__ void sgemm_sharedMem(int M, int N, int K, float alpha, const float* A
         // block threads in this block until cache is fully populated
         __syncthreads();
 
-        // advance pointers onto next chunk
+        // advance pointers onto next chunk (i.e. block of BLOCKSIZE * BLOCKSIZE)
         A += BLOCKSIZE;
         B += BLOCKSIZE * N;
 
@@ -144,7 +146,7 @@ __global__ void sgemm_sharedMem(int M, int N, int K, float alpha, const float* A
         __syncthreads();
     }
 
-    if (x < M && y < N)
+    if (C_rowIdx < M && C_colIdx < N)
     {
         C[x * N + y] = alpha * tmp + beta * C[x * N + y];
     }
