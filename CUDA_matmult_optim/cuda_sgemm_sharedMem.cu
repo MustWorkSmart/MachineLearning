@@ -1,5 +1,5 @@
 // sharedMem here as compared to naive sgemm and globalMemCoalescedWithinWarp earlier (*)
-// let's see how much slower than cublas (cublas_sgemm_alpha1_beta0.cu) and how much faster than globalMemCoalescedWithinWarp.cu
+// let's see how much slower than cublas (cublas_sgemm_alpha1_beta0.cu) and how much faster than *_globalMemCoalescedWithinWarp.cu
 // C = alpha*(matrix multiplication of A and B) + beta*C
 // A is of size M by K, M rows, K columns
 // B is of size K by N, K rows, N columns
