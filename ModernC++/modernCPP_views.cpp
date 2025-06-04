@@ -13,6 +13,7 @@
 #include <iostream>
 #include <numeric>
 #include <ranges>
+#include <print> // C++23 header for std::print and std::println
 
 int main() {
 
@@ -30,24 +31,24 @@ int main() {
    };
 
    auto values1{std::views::iota(1, 11)}; // generate integers 1-10
-   showValues(values1, "Generate integers 1-10");
+   showValues(values1, "Generate integers 1-10 [auto values1{std::views::iota(1, 11)}]");
 
    // filter each value in values1, keeping only the even integers
    auto values2{values1 | std::views::filter([](const auto& x) {return x % 2 == 0;})};
-   showValues(values2, "Filtering even integers");
+   showValues(values2, "Filtering even integers [using | op and std::views::filter with lambda]");
 
    // map each value in values2 to its square
    auto values3{values2 | std::views::transform([](const auto& x) {return x * x;})};
-   showValues(values3, "Mapping even integers to squares");
+   showValues(values3, "Mapping even integers to squares [using | op and std::views::transform with lambda]");
 
    // combine filter and transform to get squares of the even integers
    auto values4{
       values1 | std::views::filter([](const auto& x) {return x % 2 == 0;})
               | std::views::transform([](const auto& x) {return x * x; })};
-   showValues(values4, "Squares of even integers");
+   showValues(values4, "Squares of even integers [using | op and std::views::filter/transform with lambda]");
 
    // total the squares of the even integers 
-   std::cout << std::format("Sum squares of even integers 2-10: {}\n",
+   std::cout << std::format("Sum squares of even integers 2-10 [using std::accumulate with iterators]: {}\n",
       std::accumulate(std::begin(values4), std::end(values4), 0));
 
    // process a container's elements
@@ -55,7 +56,7 @@ int main() {
    auto values5{
       numbers | std::views::filter([](const auto& x) {return x % 2 == 0;})
               | std::views::transform([](const auto& x) {return x * x;})};
-   showValues(values5, "Squares of even integers in array numbers");
+   showValues(values5, "Squares of even integers in array numbers [using | op and std::views::filter/transform with lambda on: constexpr std::array]");
 
    std::println("\nTHE END");
    return 0;
